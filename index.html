@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JARVIS Lead Assistant v0.4 – Demo</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#09111e;color:#eef5ff}
+*{box-sizing:border-box}body{margin:0}header{border-bottom:1px solid #26364a;background:#101c2d;padding:19px max(18px,calc((100vw - 1100px)/2));display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:850;letter-spacing:.07em}.brand span{color:#7cc5ff}.tag{border:1px solid #426482;border-radius:30px;padding:6px 10px;color:#b4ddff;font-size:12px}
+main{max-width:1100px;margin:30px auto;padding:0 18px}h1{font-size:clamp(26px,4vw,39px);margin:0 0 8px;letter-spacing:-.025em}h2{font-size:18px;margin:0 0 16px}p,small{color:#b4c5da;line-height:1.55}.intro{max-width:760px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0}.panel{background:#121f32;border:1px solid #2c4058;border-radius:17px;padding:22px;min-width:0}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}.stat{background:#121f32;border:1px solid #2c4058;border-radius:12px;padding:15px}.stat b{display:block;font-size:21px}.stat span{color:#afc1d5;font-size:12px}
+label{display:block;color:#d2e1f2;font-size:13px;margin:13px 0 6px}input,select,textarea{width:100%;border:1px solid #536b85;border-radius:9px;background:#0b1728;color:#fff;padding:12px;font:inherit}textarea{resize:vertical;min-height:95px}
+button{border:0;border-radius:9px;background:#78c1ff;color:#071523;padding:11px 15px;font:inherit;font-weight:750;cursor:pointer;margin:9px 7px 0 0}button.secondary{background:#2c4159;color:#edf5ff}button:disabled{opacity:.42;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #a4d8ff;outline-offset:2px}
+.status{color:#a9d8ff;font-weight:750}.priority{display:inline-block;border:1px solid #54718c;border-radius:25px;padding:5px 10px;font-size:12px;color:#d9ebff}.priority.high{background:#4b3022;border-color:#be8352;color:#ffe4be}.priority.medium{background:#353b23;border-color:#969d58;color:#f5f2bc}.priority.low{background:#1c3d36;border-color:#4a9d89;color:#c2f7e8}
+.alert{border:1px solid #ba8553;background:#3e2c1e;color:#ffe9ce;padding:14px;border-radius:10px;line-height:1.5;margin-top:14px}.hidden{display:none!important}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0b1728;border-radius:11px;padding:15px;color:#e0ebfb;line-height:1.55;min-height:175px;font:13px/1.55 ui-monospace,Menlo,Consolas,monospace}.hint{font-size:12px}.answer{margin-top:18px;border-top:1px solid #334861;padding-top:18px}.footer{font-size:12px;margin:22px 0 35px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}header{padding:15px}main{margin-top:22px}.panel{padding:17px}}@media(max-width:400px){.stats{grid-template-columns:1fr}.tag{font-size:10px}}
+</style>
+</head>
+<body>
+<header><div class="brand">✦ JARVIS <span>BUSINESS</span></div><div class="tag">LEAD ASSISTANT · v0.4 DEMO</div></header>
+<main>
+<h1>Från kundförfrågan till tydligt beslut.</h1>
+<p class="intro">En mobilvänlig prototyp för svenska VVS-företag. Den strukturerar ett ärende, föreslår prioritet och skapar ett svarsförslag. <strong>Ingen AI, server eller meddelandetjänst är ansluten.</strong> Använd bara fiktiva uppgifter.</p>
+<div class="stats"><div class="stat"><b>01</b><span>Samla in förfrågan</span></div><div class="stat"><b>02</b><span>Granska prioritet och underlag</span></div><div class="stat"><b>03</b><span>Godkänn ett svar lokalt</span></div></div>
+<div class="grid">
+<section class="panel" aria-labelledby="form-title">
+<h2 id="form-title">Kundens förfrågan</h2>
+<label for="name">Namn (fiktivt) *</label><input id="name" value="Anna Testsson" autocomplete="off">
+<label for="phone">Telefon (fiktivt)</label><input id="phone" value="070-000 00 00" autocomplete="off">
+<label for="city">Ort *</label><input id="city" value="Göteborg" autocomplete="off">
+<label for="kind">Ärendetyp</label><select id="kind"><option>Läckande kran</option><option>Stopp i avlopp</option><option>Värmepump</option><option>Installation</option><option>Annat</option></select>
+<label for="desc">Beskrivning *</label><textarea id="desc">Kökskranen droppar och behöver kontrolleras.</textarea>
+<label for="urgency">Kundens egen bedömning</label><select id="urgency"><option>Planerat arbete</option><option>Inom några dagar</option><option>Akut – behöver snabb kontakt</option></select>
+<div id="warning" class="alert hidden" role="alert">⚠️ <strong>Akut ärende.</strong> Den här demon övervakas inte och kontaktar ingen. Vid pågående vattenläcka: stäng av vattnet om det kan göras säkert och kontakta riktig VVS-jour direkt. Vid omedelbar fara för liv eller egendom: ring 112.</div>
+<button id="make" type="button">Skapa underlag</button><button id="reset" type="button" class="secondary">Återställ</button>
+</section>
+<section class="panel" aria-labelledby="review-title">
+<h2 id="review-title">Företagets arbetsvy</h2>
+<p id="status" class="status" aria-live="polite">Väntar på underlag</p>
+<div id="priority" class="priority hidden" aria-live="polite"></div>
+<pre id="summary">Skapa ett arbetsunderlag för att se hur demon fungerar.</pre>
+<button id="approve" type="button" disabled>Godkänn lokalt</button><button id="reject" type="button" class="secondary" disabled>Begär komplettering</button><button id="copy" type="button" class="secondary" disabled>Kopiera underlag</button>
+<div class="answer"><h2>Svarsförslag</h2><p class="hint">Regelbaserat textutkast, inte AI-genererat. Företaget måste kontrollera och godkänna innan det används.</p><pre id="reply">Ett svarsförslag visas när du skapat underlaget.</pre><button id="copyReply" type="button" class="secondary" disabled>Kopiera svarsförslag</button></div>
+<p class="hint">Godkännande och avslag ändrar bara status i denna webbläsarflik. Inga SMS, mejl, bokningar eller andra meddelanden skickas. Ingen data sparas efter att sidan stängs.</p>
+</section>
+</div>
+<p class="footer">JARVIS Business · Prototyp för demonstration. Prioriteringen är endast en enkel regel utifrån kundens val, inte en professionell akutbedömning. Inga riktiga kunduppgifter får användas.</p>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const fields=["name","phone","city","kind","desc","urgency"];
+let current="",reply="",decision="";
+const trim=id=>$(id).value.trim();
+function warning(){$("warning").classList.toggle("hidden",!$("urgency").value.startsWith("Akut"))}
+function invalidate(){
+ current="";reply="";decision="";
+ $("summary").textContent="Formuläret har ändrats. Skapa ett nytt underlag för granskning.";
+ $("reply").textContent="Skapa ett nytt underlag för ett uppdaterat svarsförslag.";
+ $("status").textContent="Ändrat – tidigare beslut ogiltigt";
+ $("priority").className="priority hidden";
+ ["approve","reject","copy","copyReply"].forEach(id=>$(id).disabled=true);
+}
+fields.forEach(id=>$(id).addEventListener("input",()=>{invalidate();warning()}));
+$("make").addEventListener("click",()=>{
+ const name=trim("name"),city=trim("city"),desc=trim("desc");
+ if(!name||!city||!desc){invalidate();$("status").textContent="Fyll i namn, ort och beskrivning";return}
+ const urgency=$("urgency").value;
+ const level=urgency.startsWith("Akut")?"Hög":urgency==="Inom några dagar"?"Medel":"Normal";
+ const klass=level==="Hög"?"high":level==="Medel"?"medium":"low";
+ $("priority").className="priority "+klass;
+ $("priority").textContent="Föreslagen prioritet: "+level+" (ej verifierad)";
+ current=["JARVIS · ARBETSUNDERLAG (DEMO)","Kund: "+name,"Telefon: "+(trim("phone")||"Ej angivet"),"Ort: "+city,"Ärendetyp: "+$("kind").value,"Kundens brådska: "+urgency,"Föreslagen prioritet: "+level+" (regelbaserad, måste bedömas av företaget)","Beskrivning: "+desc,"","Nästa steg: Företaget granskar ärendet och avgör hur kunden ska kontaktas.","Ingen automatisk kontakt eller bokning har skett."].join("\n");
+ reply=urgency.startsWith("Akut")
+  ?"Hej "+name+"! Tack för din förfrågan. Det du beskriver kan vara brådskande. Den här demon skickar inget meddelande och övervakas inte. Kontakta en riktig VVS-jour direkt vid pågående läcka. Vi kan inte lova någon inställelsetid."
+  :"Hej "+name+"! Tack för att du hörde av dig angående "+$("kind").value.toLowerCase()+" i "+city+". Vi har tagit emot din beskrivning och behöver granska ärendet innan vi kan lämna besked om nästa steg eller tid. Vänliga hälsningar, [Företagsnamn]";
+ $("summary").textContent=current;$("reply").textContent=reply;
+ $("status").textContent="Nytt underlag – väntar på granskning";
+ ["approve","reject","copy","copyReply"].forEach(id=>$(id).disabled=false);
+ decision="";
+});
+$("approve").addEventListener("click",()=>{if(!current)return;decision="approved";$("status").textContent="Godkänt lokalt – inget skickat"});
+$("reject").addEventListener("click",()=>{if(!current)return;decision="rejected";$("status").textContent="Komplettering behövs – inget skickat"});
+async function copyText(value){
+ if(!value)return;
+ try{
+  if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(value)}
+  else{const t=document.createElement("textarea");t.value=value;document.body.appendChild(t);t.select();const ok=document.execCommand("copy");t.remove();if(!ok)throw Error("copy failed")}
+  $("status").textContent="Text kopierad – inget skickat"+(decision==="approved"?" (lokalt godkänd)":"");
+ }catch(e){$("status").textContent="Kopiering misslyckades – markera texten manuellt"}
+}
+$("copy").addEventListener("click",()=>copyText(current));
+$("copyReply").addEventListener("click",()=>copyText(reply));
+$("reset").addEventListener("click",()=>{
+ fields.forEach(id=>{const e=$(id);e.value=e.tagName==="SELECT"?e.options[0].value:e.defaultValue});
+ invalidate();warning();$("status").textContent="Demon återställd – väntar på underlag";
+});
+warning();
+</script>
+</body></html>
