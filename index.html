@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>JARVIS Lead Assistant v0.4 – Demo</title>
+<title>JARVIS Lead Assistant v0.5 – Demo</title>
 <style>
 :root{color-scheme:dark;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#09111e;color:#eef5ff}
 *{box-sizing:border-box}body{margin:0}header{border-bottom:1px solid #26364a;background:#101c2d;padding:19px max(18px,calc((100vw - 1100px)/2));display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -10,13 +10,13 @@
 main{max-width:1100px;margin:30px auto;padding:0 18px}h1{font-size:clamp(26px,4vw,39px);margin:0 0 8px;letter-spacing:-.025em}h2{font-size:18px;margin:0 0 16px}p,small{color:#b4c5da;line-height:1.55}.intro{max-width:760px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0}.panel{background:#121f32;border:1px solid #2c4058;border-radius:17px;padding:22px;min-width:0}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}.stat{background:#121f32;border:1px solid #2c4058;border-radius:12px;padding:15px}.stat b{display:block;font-size:21px}.stat span{color:#afc1d5;font-size:12px}
 label{display:block;color:#d2e1f2;font-size:13px;margin:13px 0 6px}input,select,textarea{width:100%;border:1px solid #536b85;border-radius:9px;background:#0b1728;color:#fff;padding:12px;font:inherit}textarea{resize:vertical;min-height:95px}
 button{border:0;border-radius:9px;background:#78c1ff;color:#071523;padding:11px 15px;font:inherit;font-weight:750;cursor:pointer;margin:9px 7px 0 0}button.secondary{background:#2c4159;color:#edf5ff}button:disabled{opacity:.42;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #a4d8ff;outline-offset:2px}
-.status{color:#a9d8ff;font-weight:750}.priority{display:inline-block;border:1px solid #54718c;border-radius:25px;padding:5px 10px;font-size:12px;color:#d9ebff}.priority.high{background:#4b3022;border-color:#be8352;color:#ffe4be}.priority.medium{background:#353b23;border-color:#969d58;color:#f5f2bc}.priority.low{background:#1c3d36;border-color:#4a9d89;color:#c2f7e8}
+.status{color:#a9d8ff;font-weight:750}.feedback{margin:14px 0 5px;padding:14px;border-radius:11px;border:1px solid #517391;background:#1a344d;color:#dfedfb;font-weight:700;line-height:1.5}.feedback.ok{background:#193e35;border-color:#58ad8b;color:#d9fff0}.feedback.warn{background:#483320;border-color:#d9a16d;color:#fff0d9}.feedback.info{background:#1c3349;border-color:#517391;color:#dfedfb}.priority{display:inline-block;border:1px solid #54718c;border-radius:25px;padding:5px 10px;font-size:12px;color:#d9ebff}.priority.high{background:#4b3022;border-color:#be8352;color:#ffe4be}.priority.medium{background:#353b23;border-color:#969d58;color:#f5f2bc}.priority.low{background:#1c3d36;border-color:#4a9d89;color:#c2f7e8}
 .alert{border:1px solid #ba8553;background:#3e2c1e;color:#ffe9ce;padding:14px;border-radius:10px;line-height:1.5;margin-top:14px}.hidden{display:none!important}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#0b1728;border-radius:11px;padding:15px;color:#e0ebfb;line-height:1.55;min-height:175px;font:13px/1.55 ui-monospace,Menlo,Consolas,monospace}.hint{font-size:12px}.answer{margin-top:18px;border-top:1px solid #334861;padding-top:18px}.footer{font-size:12px;margin:22px 0 35px}
 @media(max-width:760px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}header{padding:15px}main{margin-top:22px}.panel{padding:17px}}@media(max-width:400px){.stats{grid-template-columns:1fr}.tag{font-size:10px}}
 </style>
 </head>
 <body>
-<header><div class="brand">✦ JARVIS <span>BUSINESS</span></div><div class="tag">LEAD ASSISTANT · v0.4 DEMO</div></header>
+<header><div class="brand">✦ JARVIS <span>BUSINESS</span></div><div class="tag">LEAD ASSISTANT · v0.5 DEMO</div></header>
 <main>
 <h1>Från kundförfrågan till tydligt beslut.</h1>
 <p class="intro">En mobilvänlig prototyp för svenska VVS-företag. Den strukturerar ett ärende, föreslår prioritet och skapar ett svarsförslag. <strong>Ingen AI, server eller meddelandetjänst är ansluten.</strong> Använd bara fiktiva uppgifter.</p>
@@ -38,7 +38,7 @@ button{border:0;border-radius:9px;background:#78c1ff;color:#071523;padding:11px 
 <p id="status" class="status" aria-live="polite">Väntar på underlag</p>
 <div id="priority" class="priority hidden" aria-live="polite"></div>
 <pre id="summary">Skapa ett arbetsunderlag för att se hur demon fungerar.</pre>
-<button id="approve" type="button" disabled>Godkänn lokalt</button><button id="reject" type="button" class="secondary" disabled>Begär komplettering</button><button id="copy" type="button" class="secondary" disabled>Kopiera underlag</button>
+<button id="approve" type="button" disabled>Godkänn lokalt</button><button id="reject" type="button" class="secondary" disabled>Begär komplettering</button><button id="copy" type="button" class="secondary" disabled>Kopiera underlag</button><div id="feedback" class="feedback info" role="status" aria-live="polite">Skapa ett underlag för att börja granska.</div>
 <div class="answer"><h2>Svarsförslag</h2><p class="hint">Regelbaserat textutkast, inte AI-genererat. Företaget måste kontrollera och godkänna innan det används.</p><pre id="reply">Ett svarsförslag visas när du skapat underlaget.</pre><button id="copyReply" type="button" class="secondary" disabled>Kopiera svarsförslag</button></div>
 <p class="hint">Godkännande och avslag ändrar bara status i denna webbläsarflik. Inga SMS, mejl, bokningar eller andra meddelanden skickas. Ingen data sparas efter att sidan stängs.</p>
 </section>
@@ -50,20 +50,21 @@ button{border:0;border-radius:9px;background:#78c1ff;color:#071523;padding:11px 
 const $=id=>document.getElementById(id);
 const fields=["name","phone","city","kind","desc","urgency"];
 let current="",reply="",decision="";
+function feedback(message,kind="info"){$("feedback").textContent=message;$("feedback").className="feedback "+kind}
 const trim=id=>$(id).value.trim();
 function warning(){$("warning").classList.toggle("hidden",!$("urgency").value.startsWith("Akut"))}
 function invalidate(){
  current="";reply="";decision="";
  $("summary").textContent="Formuläret har ändrats. Skapa ett nytt underlag för granskning.";
  $("reply").textContent="Skapa ett nytt underlag för ett uppdaterat svarsförslag.";
- $("status").textContent="Ändrat – tidigare beslut ogiltigt";
+ $("status").textContent="Ändrat – tidigare beslut ogiltigt";feedback("Du ändrade formuläret. Tidigare beslut är inte längre giltigt. Skapa ett nytt underlag.","warn");
  $("priority").className="priority hidden";
  ["approve","reject","copy","copyReply"].forEach(id=>$(id).disabled=true);
 }
 fields.forEach(id=>$(id).addEventListener("input",()=>{invalidate();warning()}));
 $("make").addEventListener("click",()=>{
  const name=trim("name"),city=trim("city"),desc=trim("desc");
- if(!name||!city||!desc){invalidate();$("status").textContent="Fyll i namn, ort och beskrivning";return}
+ if(!name||!city||!desc){invalidate();$("status").textContent="Fyll i namn, ort och beskrivning";feedback("Fyll i obligatoriska fält innan du skapar underlaget.","warn");return}
  const urgency=$("urgency").value;
  const level=urgency.startsWith("Akut")?"Hög":urgency==="Inom några dagar"?"Medel":"Normal";
  const klass=level==="Hög"?"high":level==="Medel"?"medium":"low";
@@ -74,25 +75,25 @@ $("make").addEventListener("click",()=>{
   ?"Hej "+name+"! Tack för din förfrågan. Det du beskriver kan vara brådskande. Den här demon skickar inget meddelande och övervakas inte. Kontakta en riktig VVS-jour direkt vid pågående läcka. Vi kan inte lova någon inställelsetid."
   :"Hej "+name+"! Tack för att du hörde av dig angående "+$("kind").value.toLowerCase()+" i "+city+". Vi har tagit emot din beskrivning och behöver granska ärendet innan vi kan lämna besked om nästa steg eller tid. Vänliga hälsningar, [Företagsnamn]";
  $("summary").textContent=current;$("reply").textContent=reply;
- $("status").textContent="Nytt underlag – väntar på granskning";
+ $("status").textContent="Nytt underlag – väntar på granskning";feedback("Underlaget är klart. Granska och välj Godkänn lokalt eller Begär komplettering.","info");
  ["approve","reject","copy","copyReply"].forEach(id=>$(id).disabled=false);
  decision="";
 });
-$("approve").addEventListener("click",()=>{if(!current)return;decision="approved";$("status").textContent="Godkänt lokalt – inget skickat"});
-$("reject").addEventListener("click",()=>{if(!current)return;decision="rejected";$("status").textContent="Komplettering behövs – inget skickat"});
+$("approve").addEventListener("click",()=>{if(!current)return;decision="approved";$("status").textContent="Godkänt lokalt – inget skickat";feedback("✓ Godkänt lokalt! Beslutet gäller bara i denna flik. Inget har skickats till kunden.","ok")});
+$("reject").addEventListener("click",()=>{if(!current)return;decision="rejected";$("status").textContent="Komplettering behövs – inget skickat";feedback("Komplettering behövs. Inget har skickats till kunden.","warn")});
 async function copyText(value){
  if(!value)return;
  try{
   if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(value)}
   else{const t=document.createElement("textarea");t.value=value;document.body.appendChild(t);t.select();const ok=document.execCommand("copy");t.remove();if(!ok)throw Error("copy failed")}
-  $("status").textContent="Text kopierad – inget skickat"+(decision==="approved"?" (lokalt godkänd)":"");
- }catch(e){$("status").textContent="Kopiering misslyckades – markera texten manuellt"}
+  $("status").textContent="Text kopierad – inget skickat"+(decision==="approved"?" (lokalt godkänd)":"");feedback("Text kopierad till urklipp. Inget har skickats.","ok");
+ }catch(e){$("status").textContent="Kopiering misslyckades – markera texten manuellt";feedback("Kopiering misslyckades. Markera texten manuellt.","warn")}
 }
 $("copy").addEventListener("click",()=>copyText(current));
 $("copyReply").addEventListener("click",()=>copyText(reply));
 $("reset").addEventListener("click",()=>{
  fields.forEach(id=>{const e=$(id);e.value=e.tagName==="SELECT"?e.options[0].value:e.defaultValue});
- invalidate();warning();$("status").textContent="Demon återställd – väntar på underlag";
+ invalidate();warning();$("status").textContent="Demon återställd – väntar på underlag";feedback("Demon är återställd. Du kan skapa ett nytt underlag.","info");
 });
 warning();
 </script>
